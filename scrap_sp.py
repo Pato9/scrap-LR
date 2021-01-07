@@ -3,7 +3,7 @@ import lxml.html as html
 import os 
 import datetime
 
-name_p = 'LOGITECH'
+name_p = 'hyperx'
 
 HOME_URL = f'https://www.spdigital.cl/categories/search?q={name_p}&category_id=-1'
 BASE_URL = 'https://www.spdigital.cl'
@@ -36,7 +36,7 @@ def parse_product(link, today):
 				
 				code = parsed.xpath(XPATH_CODE)[0]	
 				document_name = brand+code	
-				print(document_name)			
+				document_name = document_name.replace('/','')		
 
 			except IndexError as e:
 				print(e)
@@ -44,11 +44,11 @@ def parse_product(link, today):
 			with open(f'{today}/{document_name}.txt','w',encoding='utf-8') as f:
 				f.write(title)
 				f.write('\n')
-				f.write(brand)
+				f.write(f'marca : {brand}')
 				f.write('\n')				
-				f.write(normal_value)
+				f.write(f'Precio normal : {normal_value}')
 				f.write('\n')
-				f.write(efective_value)
+				f.write(f'Precio Efectivo : {efective_value}')
 				f.write('\n')
 				
 		else:
