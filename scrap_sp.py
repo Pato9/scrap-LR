@@ -9,10 +9,9 @@ HOME_URL = f'https://www.spdigital.cl/categories/search?q={name_p}&category_id=-
 BASE_URL = 'https://www.spdigital.cl'
 XPATH_HREF = '//div[@class="name"]/a/@href'
 XPATH_TITLE = '//div[@class="span7"]/h1/text()'
-XPATH_NAME = '//span[@itemprop="name"]/text()'
 XPATH_VALUE ='//span[@class="product-view-cash-price-value text-webstore"]/text()'
-#TODO: arreglar esa tomando la garantia del producto
-XPATH_COMMENTS = '//p[not(@class)]/text()'
+XPATH_BRAND = '//span[@itemprop="name"]/text()'
+XPATH_CODE = '//span[@itemprop="sku"]/text()'
 
 def parse_product(link, today):
 	try:
@@ -20,30 +19,32 @@ def parse_product(link, today):
 		if response.status_code == 200:
 			product = response.content.decode('utf-8')
 			parsed = html.fromstring(product)
-		
+			
 			try:
 				title  = parsed.xpath(XPATH_TITLE)[0]
 				title = title.replace(' ','')
 				print(title)
-				name = parsed.xpath(XPATH_NAME)[0]
-				print(name)
+				brand = parsed.xpath(XPATH_BRAND)[0]
+				print(brand)
 			    #elimino los espacios en los precios
 				precios = parsed.xpath(XPATH_VALUE)
 				precios = [precios[i].replace(' ','').replace('\r','').replace(' \n','') for i in range(len(precios))]
 				normal_value = precios[0]
 				efective_value = precios[1]
 				print(normal_value,efective_value)
-				#TODO: se debe arreglar los comentarios...
-				#comments = parsed.xpath(XPATH_COMMENTS)	
-				#print(comments)				
+				
+				
+				code = parsed.xpath(XPATH_CODE)[0]	
+				document_name = brand+code	
+				print(document_name)			
 
 			except IndexError as e:
 				print(e)
-			#TODO: Arreglar el nombre con los que se guarda los documentos.	
-			with open(f'{today}/{title[:15]}.txt','w',encoding='utf-8') as f:
+		
+			with open(f'{today}/{document_name}.txt','w',encoding='utf-8') as f:
 				f.write(title)
 				f.write('\n')
-				f.write(name)
+				f.write(brand)
 				f.write('\n')				
 				f.write(normal_value)
 				f.write('\n')
